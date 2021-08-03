@@ -20,6 +20,14 @@
         android:layout_height="50dp"
         android:id="@+id/storage_prediction"
         android:textSize="30dp"
-        android:text="Photo"/>
+        android:text="Photo"
+        android:layout_margin="20dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:id="@+id/filter_image"
+        android:textSize="30dp"
+        android:text="Filter Image"/>
 
 </LinearLayout>

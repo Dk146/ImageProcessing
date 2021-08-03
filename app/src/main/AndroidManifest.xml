@@ -24,7 +24,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ImageProcessing">
-        <activity android:name=".StoragePredictionActivity"></activity>
+        <activity android:name=".FilterImage"></activity>
+        <activity android:name=".StoragePredictionActivity" />
         <activity android:name=".CameraActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

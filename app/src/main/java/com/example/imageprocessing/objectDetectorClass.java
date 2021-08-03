@@ -231,11 +231,67 @@ public class objectDetectorClass {
                 Imgproc.putText(mat_image, labelList.get((int) class_value), new Point(left, top), 3, 1,new Scalar(100,100,100), 2);
             }
         }
-
-
-
-
         return mat_image;
+    }
+
+    ArrayList<String> getObjectName(Mat mat_image) {
+
+        Bitmap bitmap = null;
+        bitmap = Bitmap.createBitmap(mat_image.cols(), mat_image.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat_image, bitmap);
+
+        height = bitmap.getHeight();
+        width = bitmap.getWidth();
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
+
+        ByteBuffer byteBuffer = convertBitmaptoByteBuffer(scaledBitmap);
+
+        //defining output
+        // 10: top 10 object detected
+        // 4: three coordinate in image
+        //float[][][] result = new float[1][10][5];
+        Object[] input  = new Object[1];
+        input[0] = byteBuffer;
+
+        Map<Integer, Object> output_map = new TreeMap<>();
+
+        float[][][] boxes = new float[1][10][4];
+        //10: top 10 object detected
+        // 4: there coordinate image
+        float[][] scores = new float[1][10];
+        //stores scores of 10 objects
+        float[][] classes = new float[1][10];
+        //stores class of object
+
+        // add it to object_map;
+        output_map.put(0, boxes);
+        output_map.put(1,classes);
+        output_map.put(2,scores);
+
+        // now predict
+        interpreter.runForMultipleInputsOutputs(input, output_map);
+        //select device and run
+
+        Object value = output_map.get(0);
+        Object object_class = output_map.get(1);
+        Object score = output_map.get(2);
+
+        // loop through each object
+        // as output has only 10 boxes
+
+        ArrayList<String> listObject = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i) {
+            float class_value = (float) Array.get(Array.get(object_class, 0),i);
+            float score_value = (float) Array.get(Array.get(score, 0), i);
+            // define thresh for score
+            if (score_value > 0.5) {
+                listObject.add(labelList.get((int) class_value));
+            }
+        }
+
+        return listObject;
     }
 
     private ByteBuffer convertBitmaptoByteBuffer(Bitmap bitmap) {

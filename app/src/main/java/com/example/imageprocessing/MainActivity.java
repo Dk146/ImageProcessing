@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button camera_button;
     private Button storage_predict;
+    private Button filter_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, StoragePredictionActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        });
+
+        filter_img = findViewById(R.id.filter_image);
+        filter_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, FilterImage.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
     }
