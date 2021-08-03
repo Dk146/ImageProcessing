@@ -162,6 +162,138 @@ public class objectDetectorClass {
         return mat_image;
     }
 
+    //for selected photo
+    public Mat recognizePhoto(Mat mat_image) {
+
+        // if you do not do this process you will get improrer prediction, less no. of object
+        // now convert it to bitmap
+        Bitmap bitmap = null;
+        bitmap = Bitmap.createBitmap(mat_image.cols(), mat_image.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat_image, bitmap);
+        //define height and width
+        height = bitmap.getHeight();
+        width = bitmap.getWidth();
+
+        // scale the bitmap to input size of model
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
+
+        // convert bitmap to bytebuffer as model input should be in it
+        ByteBuffer byteBuffer = convertBitmaptoByteBuffer(scaledBitmap);
+
+        //defining output
+        // 10: top 10 object detected
+        // 4: three coordinate in image
+        //float[][][] result = new float[1][10][5];
+        Object[] input  = new Object[1];
+        input[0] = byteBuffer;
+
+        Map<Integer, Object> output_map = new TreeMap<>();
+
+        float[][][] boxes = new float[1][10][4];
+        //10: top 10 object detected
+        // 4: there coordinate image
+        float[][] scores = new float[1][10];
+        //stores scores of 10 objects
+        float[][] classes = new float[1][10];
+        //stores class of object
+
+        // add it to object_map;
+        output_map.put(0, boxes);
+        output_map.put(1,classes);
+        output_map.put(2,scores);
+
+        // now predict
+        interpreter.runForMultipleInputsOutputs(input, output_map);
+        //select device and run
+
+        Object value = output_map.get(0);
+        Object object_class = output_map.get(1);
+        Object score = output_map.get(2);
+
+        // loop through each object
+        // as output has only 10 boxes
+        for (int i = 0; i < 10; ++i) {
+            float class_value = (float) Array.get(Array.get(object_class, 0),i);
+            float score_value = (float) Array.get(Array.get(score, 0), i);
+            // define thresh for score
+            if (score_value > 0.5) {
+                Object box1 = Array.get(Array.get(value, 0), i);
+                // we are multiplying it with original height and width of frame
+                float top = (float) Array.get(box1, 0) * height;
+                float left = (float) Array.get(box1, 1) * width;
+                float bottom = (float) Array.get(box1, 2) * height;
+                float right = (float) Array.get(box1, 3) * width;
+
+                //draw rectangle in original frame // starting point // ending point of box // color of box // thickness
+                Imgproc.rectangle(mat_image, new Point(left, top), new Point(right, bottom), new Scalar(255,155,155), 2);
+                //write text on frame
+                // string of class name of object // starting point                               // color of text
+                Imgproc.putText(mat_image, labelList.get((int) class_value), new Point(left, top), 3, 1,new Scalar(100,100,100), 2);
+            }
+        }
+        return mat_image;
+    }
+
+    ArrayList<String> getObjectName(Mat mat_image) {
+
+        Bitmap bitmap = null;
+        bitmap = Bitmap.createBitmap(mat_image.cols(), mat_image.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat_image, bitmap);
+
+        height = bitmap.getHeight();
+        width = bitmap.getWidth();
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
+
+        ByteBuffer byteBuffer = convertBitmaptoByteBuffer(scaledBitmap);
+
+        //defining output
+        // 10: top 10 object detected
+        // 4: three coordinate in image
+        //float[][][] result = new float[1][10][5];
+        Object[] input  = new Object[1];
+        input[0] = byteBuffer;
+
+        Map<Integer, Object> output_map = new TreeMap<>();
+
+        float[][][] boxes = new float[1][10][4];
+        //10: top 10 object detected
+        // 4: there coordinate image
+        float[][] scores = new float[1][10];
+        //stores scores of 10 objects
+        float[][] classes = new float[1][10];
+        //stores class of object
+
+        // add it to object_map;
+        output_map.put(0, boxes);
+        output_map.put(1,classes);
+        output_map.put(2,scores);
+
+        // now predict
+        interpreter.runForMultipleInputsOutputs(input, output_map);
+        //select device and run
+
+        Object value = output_map.get(0);
+        Object object_class = output_map.get(1);
+        Object score = output_map.get(2);
+
+        // loop through each object
+        // as output has only 10 boxes
+
+        ArrayList<String> listObject = new ArrayList<>();
+
+        for (int i = 0; i < 10; ++i) {
+            float class_value = (float) Array.get(Array.get(object_class, 0),i);
+            float score_value = (float) Array.get(Array.get(score, 0), i);
+            // define thresh for score
+            if (score_value > 0.5) {
+                listObject.add(labelList.get((int) class_value));
+            }
+        }
+
+        return listObject;
+    }
+
     private ByteBuffer convertBitmaptoByteBuffer(Bitmap bitmap) {
         ByteBuffer byteBuffer;
         // some model input should be quant = 0 for some quant = 1
