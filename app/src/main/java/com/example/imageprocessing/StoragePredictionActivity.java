@@ -94,7 +94,7 @@ public class StoragePredictionActivity extends AppCompatActivity {
 
                     Bitmap bitmap1 = null;
                     bitmap1 = Bitmap.createBitmap(selected_image.cols(), selected_image.rows(), Bitmap.Config.ARGB_8888);
-                    Utils.matToBitmap(selected_image, bitmap);
+                    Utils.matToBitmap(selected_image, bitmap1);
 
                     img_view.setImageBitmap(bitmap1);
                     Log.d("NO","YES");
