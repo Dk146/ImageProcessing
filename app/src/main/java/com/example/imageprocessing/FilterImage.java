@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,21 +50,32 @@ public class FilterImage extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        select_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                image_chooser();
-            }
-        });
+        Uri folder;
+        folder = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Log.d("Path", String.valueOf(folder));
+
+        String []projection = {
+                MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+        };
+        String orderby = MediaStore.Video.Media.DATE_TAKEN;
+        Cursor cursor = getContentResolver().query(folder, projection,null,
+                            null, orderby + " DESC");
+
+        int ColumnIndexData = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        String absPath;
+        uri = new ArrayList<>();
+        while (cursor.moveToNext()){
+            absPath = cursor.getString(ColumnIndexData);
+            uri.add(absPath);
+        }
+
+        predict();
     }
 
+    /*
     private void image_chooser() {
 
-//        if (ActivityCompat.checkSelfPermission(FilterImage.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(FilterImage.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
-//            return;
-//        }
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -73,40 +85,33 @@ public class FilterImage extends AppCompatActivity {
         startActivityForResult(intent, SELECT_PICTURE);
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        uri = new ArrayList<>();
-        if (resultCode == RESULT_OK && requestCode == SELECT_PICTURE) {
-            ClipData clipData = data.getClipData();
+     */
 
-            if (clipData != null) {
-                for (int i = 0; i < clipData.getItemCount(); ++i) {
-                    Uri selectedImageUri = clipData.getItemAt(i).getUri();
-                    uri.add(String.valueOf(selectedImageUri));
-                    Log.d("URI: ", String.valueOf(selectedImageUri));
-                }
-            }
-        }
-
+    public void predict() {
         result = new ArrayList<>();
 
         for (int i = 0; i < uri.size(); ++i) {
+
             Uri imageUri = Uri.parse(uri.get(i));
             if (imageUri != null) {
                 Log.d("StoragePrediction", "Output_uri: " + imageUri);
                 Bitmap bitmap = null;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    Log.d("StoragePrediction", "success");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Log.d("StoragePrediction", "fail");
                 }
 
+                /*
                 Mat selected_image = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC4);
                 Utils.bitmapToMat(bitmap, selected_image);
 
                 selected_image = objectDetectorClass.recognizePhoto(selected_image);
 
                 result.add(objectDetectorClass.getObjectName(selected_image));
+                */
             }
         }
         for (int i = 0; i < result.size(); ++i) {
@@ -115,4 +120,5 @@ public class FilterImage extends AppCompatActivity {
             }
         }
     }
+
 }

@@ -98,3 +98,6 @@ public class StoragePredictionActivity extends AppCompatActivity {
 
     }
 }
+
+//Output_uri: content://com.android.providers.media.documents/document/image%3A1640
+//Output_uri: /storage/emulated/0/Pictures/Messenger/received_195327729152658.jpeg
