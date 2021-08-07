@@ -3,8 +3,8 @@ package com.example.imageprocessing;
 import java.util.ArrayList;
 
 public class Result {
-    private ArrayList<ArrayList<String>> result;
-    private ArrayList<String> uri;
+    public ArrayList<ArrayList<String>> result;
+    public ArrayList<String> uri;
     private Result(){
         result = null;
         uri = null;

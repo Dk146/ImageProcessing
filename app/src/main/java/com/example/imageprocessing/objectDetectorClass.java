@@ -14,7 +14,6 @@ import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.gpu.GpuDelegate;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -147,10 +146,10 @@ public class objectDetectorClass {
                 float right = (float) Array.get(box1, 3) * width;
 
                 //draw rectangle in original frame // starting point // ending point of box // color of box // thickness
-                Imgproc.rectangle(rotated_mat_image, new Point(left, top), new Point(right, bottom), new Scalar(255,155,155), 2);
+                Imgproc.rectangle(rotated_mat_image, new Point(left, top), new Point(right, bottom), new Scalar(245,198,98), 2);
                 //write text on frame
                                                   // string of class name of object // starting point                               // color of text
-                Imgproc.putText(rotated_mat_image, labelList.get((int) class_value), new Point(left, top), 3, 1,new Scalar(100,100,100), 2);
+                Imgproc.putText(rotated_mat_image, labelList.get((int) class_value), new Point(left, top), 3, 1,new Scalar(245,198,98), 2);
             }
         }
 
@@ -225,10 +224,10 @@ public class objectDetectorClass {
                 float right = (float) Array.get(box1, 3) * width;
 
                 //draw rectangle in original frame // starting point // ending point of box // color of box // thickness
-                Imgproc.rectangle(mat_image, new Point(left, top), new Point(right, bottom), new Scalar(255,155,155), 2);
+                Imgproc.rectangle(mat_image, new Point(left, top), new Point(right, bottom), new Scalar(245,198,98), 2);
                 //write text on frame
                 // string of class name of object // starting point                               // color of text
-                Imgproc.putText(mat_image, labelList.get((int) class_value), new Point(left, top), 3, 1,new Scalar(100,100,100), 2);
+                Imgproc.putText(mat_image, labelList.get((int) class_value), new Point(left, top), 3, 1,new Scalar(245,198,98), 2);
             }
         }
         return mat_image;

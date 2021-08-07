@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ImageProcessing</string>
+    <string-array name="labels_array">
+        <item>None</item>
+        <item>Person</item>
+        <item>Plant</item>
+        <item>Cat</item>
+        <item>Dog</item>
+        <item>Train</item>
+        <item>Keyboard</item>
+        <item>Bottle</item>
+        <item>Chair</item>
+        <item>Laptop</item>
+    </string-array>
 </resources>
